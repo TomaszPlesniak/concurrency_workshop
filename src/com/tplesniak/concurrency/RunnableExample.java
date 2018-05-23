@@ -1,10 +1,15 @@
 package com.tplesniak.concurrency;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class RunnableExample {
 
     private static volatile boolean flag;
 
     public static void main(String[] args) throws InterruptedException {
+
+        ExecutorService service = Executors.newFixedThreadPool(20);
 
         Runnable runnable = () -> {
             while (true) {
@@ -23,12 +28,15 @@ public class RunnableExample {
             }
         };
 
-        Thread thread = new Thread(runnable);
-        thread.start();
+
+        service.submit(runnable);
+
 
         Thread.sleep(5000);
         System.out.println("First thread - Changing flag");
         flag = true;
         System.out.println("First thread - end");
+
+        if (service != null) service.shutdown();
     }
 }
