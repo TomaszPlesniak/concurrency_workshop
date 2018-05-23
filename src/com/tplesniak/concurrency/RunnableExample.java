@@ -1,15 +1,20 @@
 package com.tplesniak.concurrency;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Random;
+import java.util.concurrent.*;
 
 public class RunnableExample {
 
     private static volatile boolean flag;
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, ExecutionException {
 
         ExecutorService service = Executors.newFixedThreadPool(20);
+
+        Future<Integer> result;
+
+        Callable<Integer> callable = () -> new Random().nextInt(50);
+
 
         Runnable runnable = () -> {
             while (true) {
@@ -30,6 +35,8 @@ public class RunnableExample {
 
 
         service.submit(runnable);
+        result = service.submit(callable);
+        System.out.println("drawn number: " + result.get());
 
 
         Thread.sleep(5000);
